@@ -28,6 +28,7 @@ from twisted.internet import reactor, protocol
 from twisted.python import log
 import re
 import sys
+import os
 
 log.startLogging(sys.stdout)
 
@@ -146,5 +147,9 @@ class TransparentProxy(http.HTTPChannel):
 class ProxyFactory(http.HTTPFactory):
     protocol = TransparentProxy
  
-reactor.listenTCP(8080, ProxyFactory())
+if 'PROXY_PORT' in os.environ:
+    port = int(os.environ['PROXY_PORT'])
+else:
+    port = 8080
+reactor.listenTCP(port, ProxyFactory())
 reactor.run()
